@@ -2,6 +2,7 @@ package my.web.service;
 
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
+import java.sql.*;
 
 /**
  * Created by Basilianius on 14.02.2015.
@@ -19,6 +20,18 @@ public class Calculator {
 
     public int sub(int a, int b) {
         return a - b;
+    }
+
+    public String getCountry (int a) throws SQLException {
+        String url = "jdbc:mysql://localhost:1985/sakila";
+        String user = "root";
+        String password = "!root!";
+
+        Connection con = DriverManager.getConnection(url, user, password);
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT country FROM country WHERE country_id = " + a + ";");
+
+        return rs.toString();
     }
 
 
