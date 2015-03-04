@@ -24,36 +24,42 @@ public class Calculator {
 
     public String getCountry (int a){
 
-
-
-        String url = "jdbc:mysql//127.0.0.1:1985/sakila";
-        String user = "root";
-        String password = "!root!";
-
-        String b = "";
-
         try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT country FROM country WHERE country_id = " + a + ";");
-
-            b = rs.toString();
-            //if (rs.next()) {
-
-            //}
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.out.println("Loading driver...");
+            Class.forName("com.mysql.jdbc.Driver");
+            System.out.println("Driver loaded!");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot find the driver in the classpath!", e);
         }
 
+        String url = "jdbc:mysql://localhost:1985/sakila";
+        String username = "root";
+        String password = "!root!";
+        Connection connection = null;
+
+        String b = "aaa";
+        try {
+            System.out.println("Connecting database...");
+            connection = DriverManager.getConnection(url, username, password);
+            System.out.println("Database connected!");
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT country FROM country WHERE country_id = " + a + ";");
+
+            int country = rs.findColumn("country");
+
+            while(rs.next()) {
+                b = rs.getString(country);
+             }
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Cannot connect the database!", e);
+        } finally {
+            System.out.println("Closing the connection.");
+            if (connection != null) try { connection.close(); } catch (SQLException ignore) {}
+        }
         return b;
 
     }
